@@ -1,3 +1,6 @@
+![Status](https://img.shields.io/badge/status-active-success)
+
+
 # 📕 ExchangeBook Platform
 
 > A full-stack web application enabling users to seamlessly exchange books through a structured, real-time, and trust-driven system.
@@ -118,20 +121,21 @@ WebSocket Layer (Real-Time Chat)
 - Real-Time Capability  
   WebSocket integration enhances user interaction during exchanges
 
-  ---
+---
+## Tech Stack
 
-  ## Tech Stack
+| Layer            | Technology                     | Badge |
+|------------------|-------------------------------|-------|
+| Frontend         | Next.js, TypeScript           | ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white) |
+| Backend          | FastAPI, Python               | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white) |
+| Database         | PostgreSQL                    | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white) |
+| ORM              | SQLAlchemy                    | ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=flat) |
+| Migrations       | Alembic                       | ![Alembic](https://img.shields.io/badge/Alembic-4B8BBE?style=flat) |
+| Authentication   | JWT (JSON Web Tokens)         | ![JWT](https://img.shields.io/badge/JWT-black?style=flat&logo=jsonwebtokens) |
+| Real-Time Layer  | WebSockets                    | ![WebSockets](https://img.shields.io/badge/WebSockets-010101?style=flat) |
+| API Architecture | REST                          | ![REST](https://img.shields.io/badge/API-RESTful-blue?style=flat) |
 
-    | Layer            | Technology                     |
-    |------------------|-------------------------------|
-    | Frontend         | Next.js, TypeScript           |
-    | Backend          | FastAPI, Python               |
-    | Database         | PostgreSQL                    |
-    | ORM              | SQLAlchemy                    |
-    | Migrations       | Alembic                       |
-    | Authentication   | JWT (JSON Web Tokens)         |
-    | Real-Time Layer  | WebSockets                    |
-    | API Architecture | REST                          |
+  
 
 ---
 
@@ -545,3 +549,144 @@ Follow the steps below to run the application locally.
 ```bash
 git clone https://github.com/sanheeth-singh/ExchangeBook-Platform.git
 cd ExchangeBook-Platform
+```
+### 2. Backend Setup (FastAPI)
+```bash
+cd app
+python -m venv .venv
+
+Activate virtual environment:
+
+Windows:
+.venv\Scripts\activate
+
+
+macOS/Linux:
+source .venv/bin/activate
+
+
+Install dependencies:
+pip install -r requirements.txt
+```
+
+### 3. Environment Configuration
+-Create a .env file in the backend directory:
+
+```bash
+DATABASE_URL=postgresql+asyncpg://username:password@localhost:5432/exchangebook
+JWT_SECRET=your_secret_key
+
+```
+
+### 4. Database Setup
+
+Run migrations:
+```
+alembic upgrade head
+```
+
+### 5. Run Backend Server
+```
+uvicorn app.main:app --reload
+```
+
+- Backend will run on: http://127.0.0.1:8000
+
+### 6. Frontend Setup (Next.js)
+```bash
+cd ../book-exchange-frontend
+npm install
+npm run dev
+```
+
+- Frontend will run on: http://localhost:3000
+
+### 7. Access the Application
+
+Frontend: http://127.0.0.1:3000
+
+Backend: http://127.0.0.1:8000
+
+---
+
+## Environment Variables
+
+The application requires the following environment variables to be configured in a `.env` file.
+
+| Variable        | Description                                      | Example                                                                 |
+|----------------|--------------------------------------------------|-------------------------------------------------------------------------|
+| DATABASE_URL   | PostgreSQL connection string                     | postgresql+asyncpg://user:password@localhost:5432/exchangebook          |
+| JWT_SECRET     | Secret key used for JWT token generation         | your_secret_key                                                         |
+
+---
+
+### Notes
+
+- Do not commit the `.env` file to version control  
+- Use strong and unique values for sensitive variables  
+- Ensure environment variables are properly configured before running the application  
+
+---
+
+## Deployment
+
+The application is currently designed for local development. Production deployment is planned with a focus on scalability, reliability, and cloud-native practices.
+
+---
+
+### Planned Deployment Architecture
+
+- Frontend  
+  Deployed as a static or server-rendered application using modern hosting platforms.
+
+- Backend  
+  Containerized FastAPI application deployed on cloud infrastructure.
+
+- Database  
+  Managed PostgreSQL instance for reliability and scalability.
+
+---
+
+### Cloud Strategy
+
+The platform is intended to be deployed using cloud services such as AWS, leveraging:
+
+- Compute services for backend hosting  
+- Managed database services for PostgreSQL  
+- Object storage for future media handling  
+- Networking and security configurations for controlled access  
+
+---
+
+### Future Enhancements
+
+- Docker-based containerization for consistent environments  
+- CI/CD pipeline for automated testing and deployment  
+- Environment-based configurations for development, staging, and production  
+- Monitoring and logging for performance and reliability  
+
+---
+
+### Status
+
+Deployment is currently in progress and will be integrated in future updates.
+
+---
+
+## Author
+
+Sanheeth Singh  
+Computer Science Engineering Student  
+Focused on Backend Development, Cloud Computing, and Scalable Systems  
+
+- Linkedin: https://www.linkedin.com/in/sanheeth-singh
+
+---
+
+
+## Acknowledgements
+
+This project was built as part of continuous learning in full-stack development, system design, and cloud-based application architecture.
+
+---
+
