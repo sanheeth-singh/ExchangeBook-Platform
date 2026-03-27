@@ -6,7 +6,7 @@ import { Exchange } from "@/types/exchange";
 import ExchangeCard from "./ExchangeCard";
 
 type Props = {
-  status?: "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+  status?: "PENDING" | "ACCEPTED" | "REJECTED" | "CANCELLED" | "COMPLETED" | "WAITING_CONFIRMATION";
 };
 
 export default function ExchangeSentList({ status = "PENDING" }: Props) {

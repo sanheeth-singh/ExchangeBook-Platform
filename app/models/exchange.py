@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, ForeignKey, Enum
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -24,9 +24,22 @@ class Exchange(Base, TimestampMixin):
         nullable=False,
     )
 
+    #relationships
     requester = relationship("User", foreign_keys=[requester_id], back_populates="sent_exchanges")
     owner = relationship("User", foreign_keys=[owner_id], back_populates="received_exchanges")
 
     requested_book = relationship("ExchangeBook", back_populates="requested_exchanges")
 
     review = relationship("Review", back_populates="exchange", uselist=False)
+
+
+    #completion of exchange 
+    owner_confirmed = Column(Boolean, default=False, nullable=False)
+    requester_confirmed = Column(Boolean, default=False, nullable=False)
+
+    owner_confirmed_at = Column(DateTime(timezone=True), nullable=True)
+    requester_confirmed_at = Column(DateTime(timezone=True), nullable=True)
+
+    first_confirmed_at = Column(DateTime(timezone=True), nullable=True)
+
+    is_disputed = Column(Boolean, default=False, nullable=False)

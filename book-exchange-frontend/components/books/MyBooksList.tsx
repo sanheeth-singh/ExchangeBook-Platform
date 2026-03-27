@@ -48,7 +48,7 @@ export default function MyBooksList() {
       {/* Header */}
       <div className="flex items-center justify-between">
 
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-800">
           {books.length} books
         </span>
       </div>

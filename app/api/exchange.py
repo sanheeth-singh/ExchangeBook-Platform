@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from datetime import datetime
 
 from app.db.session import get_async_session
 from app.models.exchange import Exchange
@@ -127,7 +128,7 @@ async def accept_exchange(
     await session.commit()
     await session.refresh(exchange)
 
-     # fetch owner
+    # fetch owner
     owner_result = await session.execute(
         select(User).where(User.id == exchange.owner_id)
     )
@@ -239,6 +240,73 @@ async def cancel_exchange(
     ) 
 
 
+#complete the exchange 
+
+@router.patch("/{exchange_id}/complete")
+async def mark_exchange_complete(
+    exchange_id: uuid.UUID,
+    session: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(get_current_user),
+):
+    result = await session.execute(
+        select(Exchange).where(Exchange.id == exchange_id)
+    )
+    exchange = result.scalar_one_or_none()
+
+    if not exchange:
+        raise HTTPException(404, "Exchange not found")
+
+    # ✅ security check
+    if current_user.id not in [exchange.owner_id, exchange.requester_id]:
+        raise HTTPException(403, "Not allowed")
+
+    # ✅ valid state check
+    if exchange.status not in [
+        ExchangeStatusEnum.ACCEPTED,
+        ExchangeStatusEnum.WAITING_CONFIRMATION,
+    ]:
+        raise HTTPException(400, "Invalid state")
+
+    # ✅ prevent duplicate confirmation
+    if (
+        current_user.id == exchange.owner_id
+        and exchange.owner_confirmed
+    ):
+        raise HTTPException(400, "Already confirmed")
+
+    if (
+        current_user.id == exchange.requester_id
+        and exchange.requester_confirmed
+    ):
+        raise HTTPException(400, "Already confirmed")
+
+    now = datetime.utcnow()
+
+    # ✅ mark confirmation
+    if current_user.id == exchange.owner_id:
+        exchange.owner_confirmed = True
+        exchange.owner_confirmed_at = now
+
+    elif current_user.id == exchange.requester_id:
+        exchange.requester_confirmed = True
+        exchange.requester_confirmed_at = now
+
+    # ✅ first confirmation tracker
+    if not exchange.first_confirmed_at:
+        exchange.first_confirmed_at = now
+
+    # ✅ FINAL STATE LOGIC (critical)
+    if exchange.owner_confirmed and exchange.requester_confirmed:
+        exchange.status = ExchangeStatusEnum.COMPLETED
+    else:
+        exchange.status = ExchangeStatusEnum.WAITING_CONFIRMATION
+
+    await session.commit()
+    await session.refresh(exchange)
+
+    return {"message": "Confirmation recorded", "status": exchange.status}
+
+
 
 #get sent exchanges
 @router.get("/sent", response_model=list[ExchangeResponse])
@@ -270,6 +338,11 @@ async def get_sent_exchanges(
         requester_name=e.requester.username,
         owner_name=e.owner.username,
         requested_book_id=e.requested_book_id,
+        owner_confirmed=e.owner_confirmed,
+        requester_confirmed=e.requester_confirmed,
+        owner_confirmed_at= e.owner_confirmed_at,
+        requester_confirmed_at=e.requester_confirmed_at,
+        first_confirmed_at=e.first_confirmed_at,
         status=e.status,
         created_at=e.created_at,
         updated_at=e.updated_at,
@@ -308,9 +381,15 @@ async def get_received_exchanges(
         requester_name=e.requester.username,
         owner_name=e.owner.username,
         requested_book_id=e.requested_book_id,
+        owner_confirmed=e.owner_confirmed,
+        requester_confirmed=e.requester_confirmed,
+        owner_confirmed_at= e.owner_confirmed_at,
+        requester_confirmed_at=e.requester_confirmed_at,
+        first_confirmed_at=e.first_confirmed_at,        
         status=e.status,
         created_at=e.created_at,
         updated_at=e.updated_at,
+
     )
     for e in exchanges
 ]

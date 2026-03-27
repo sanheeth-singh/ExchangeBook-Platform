@@ -128,7 +128,7 @@ async def delete_book(
         delete(Exchange).where(Exchange.requested_book_id == book_id)
     )
 
-    # 🗑 delete book
+    #  delete book
     await session.delete(book)
 
     await session.commit()

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 from uuid import UUID
 from app.enums import ExchangeStatusEnum
@@ -19,6 +21,12 @@ class ExchangeResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+    owner_confirmed: bool
+    requester_confirmed: bool
+
+    owner_confirmed_at: Optional[datetime] = None
+    requester_confirmed_at: Optional[datetime] = None
+    first_confirmed_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

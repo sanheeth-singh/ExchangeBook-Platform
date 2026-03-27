@@ -9,9 +9,10 @@ type TabType =
   | "sent"
   | "received"
   | "accepted"
+  | "completed"
+  | "waiting"
   | "rejected"
-  | "cancelled"
-  | "completed";
+  | "cancelled";
 
 export default function ExchangesTab() {
   const [tab, setTab] = useState<TabType>("sent");
@@ -19,10 +20,11 @@ export default function ExchangesTab() {
   const tabs: { id: TabType; label: string }[] = [
     { id: "sent", label: "Sent" },
     { id: "received", label: "Received" },
-    { id: "accepted", label: "Accepted" },
+    { id: "accepted", label: "Accepted" },    
+    { id: "waiting", label: "Waiting"},
+    { id: "completed", label: "Completed"},
     { id: "rejected", label: "Rejected" },
     { id: "cancelled", label: "Cancelled" },
-    { id: "completed", label: "Completed" },
   ];
 
   return (
@@ -73,7 +75,7 @@ export default function ExchangesTab() {
 
         {tab === "accepted" && (
           <>
-            <ExchangeSentList status="ACCEPTED" />
+            <ExchangeSentList status="ACCEPTED" />       
             <br />
             <ExchangeReceivedList status="ACCEPTED" />
           </>
@@ -95,17 +97,24 @@ export default function ExchangesTab() {
           </>
         )}
 
-        {tab === "completed" && (
+        {tab === "waiting" &&(
           <>
-            <div className="text-gray-500">
-              Completed requests will appear here.
-            </div>
-
-            <ExchangeSentList status="COMPLETED" />
-            <br />
-            <ExchangeReceivedList status="COMPLETED" />
+          <ExchangeSentList status="WAITING_CONFIRMATION"/>
+          <br />
+          <ExchangeReceivedList status="WAITING_CONFIRMATION"/>
           </>
         )}
+
+        {tab === "completed" && (
+          <>
+            <span>Sent</span>
+            <ExchangeSentList status="COMPLETED"/>
+            <br />
+            <span>Received</span>
+            <ExchangeReceivedList status="COMPLETED"/>
+          </>          
+        )}
+        
       </motion.div>
     </div>
   );

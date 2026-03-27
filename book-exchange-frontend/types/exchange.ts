@@ -3,7 +3,8 @@ export type ExchangeStatus =
   | "ACCEPTED"
   | "REJECTED"
   | "CANCELLED"
-  | "COMPLETED";
+  | "COMPLETED"
+  | "WAITING_CONFIRMATION";
 
 export interface Exchange {
   updated_at: string | number | Date;
@@ -14,6 +15,9 @@ export interface Exchange {
   requested_book_id: string;
   requester_name: string;
   owner_name: string;
+  owner_confirmed: string;
+  requester_confirmed: string;
+  first_confirmed_at: string | number | Date;
   status: ExchangeStatus;
   
 }
